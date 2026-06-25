@@ -1,0 +1,113 @@
+/* ============================================================
+   Drydown — base theme & custom utilities
+   ------------------------------------------------------------
+   For the standalone preview, this same CSS is inlined inside
+   templates/index.html so the page renders without a build step.
+   Once you wire the Go static file server (and later a real
+   Tailwind build), drop the inline <style> block in index.html
+   and link this file instead:
+     <link rel="stylesheet" href="/static/css/app.css">
+   ============================================================ */
+
+:root {
+  --noir: #0b0b0f;
+  --ink: #121219;
+  --cream: #f4efe6;
+  --muted: #a39a88;
+  --gold: #e3b775;
+  --gold-deep: #c8924a;
+  --gold-soft: #f6e3be;
+  --wine: #7c3a52;
+}
+
+* { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--noir);
+  color: var(--cream);
+  background-image:
+    radial-gradient(60rem 60rem at 82% -12%, rgba(227, 183, 117, 0.10), transparent 60%),
+    radial-gradient(50rem 50rem at -12% 18%, rgba(124, 58, 82, 0.14), transparent 55%),
+    radial-gradient(42rem 42rem at 50% 118%, rgba(227, 183, 117, 0.06), transparent 60%);
+  background-attachment: fixed;
+}
+
+::selection { background: var(--gold); color: #1a1306; }
+
+/* Fine film-grain overlay for a tactile, premium feel */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 11px; }
+::-webkit-scrollbar-track { background: #0b0b0f; }
+::-webkit-scrollbar-thumb {
+  background: #2a2a33;
+  border-radius: 99px;
+  border: 3px solid #0b0b0f;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gold-deep); }
+
+/* Shimmering gold display text */
+.text-gradient {
+  background: linear-gradient(100deg, #f6e3be 0%, #e3b775 28%, #c8924a 52%, #f6e3be 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s linear infinite;
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+
+/* Hairline divider with a soft gold glow in the middle */
+.rule-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(227, 183, 117, 0.5), transparent);
+}
+
+/* Scent-family gradients used as the card "bottle art" backdrop */
+.fam-woody    { background: linear-gradient(140deg, #3a2415, #6b4423 52%, #caa46a); }
+.fam-floral   { background: linear-gradient(140deg, #4a1f33, #a23b67 52%, #f0a7c4); }
+.fam-fresh    { background: linear-gradient(140deg, #0f3a39, #1f7a6e 52%, #7fe0c9); }
+.fam-amber    { background: linear-gradient(140deg, #4a2a0a, #b9762a 52%, #f4cd7a); }
+.fam-gourmand { background: linear-gradient(140deg, #3a210f, #7a4a22 52%, #d8a066); }
+.fam-leather  { background: linear-gradient(140deg, #241b14, #5a3f2c 52%, #9c7a52); }
+
+/* Glassy sweep that crosses the card art on hover */
+.card-art { position: relative; overflow: hidden; }
+.card-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.28) 45%, transparent 60%);
+  transform: translateX(-130%);
+  transition: transform 0.85s ease;
+}
+.group:hover .card-art::after { transform: translateX(130%); }
+
+/* Infinite logo / notes marquee */
+.marquee {
+  display: flex;
+  gap: 3.5rem;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
