@@ -1,0 +1,103 @@
+{{/* ------------------------------------------------------------------
+  cart-drawer.html — server-rendered cart (HTMX partials)
+
+  Defines:
+    cart-count          header badge (initial render, receives cart.Cart)
+    cart-drawer-inner   the drawer body markup (#cart-drawer-body)
+    cart-body           cart-drawer-inner + an out-of-band badge update,
+                        returned by the cart endpoints so a single swap
+                        refreshes both the drawer and the header count
+    order-confirmation  shown in the drawer after checkout (receives order.Order)
+
+  Alpine owns only the drawer open/close state ($store.drawer); the contents
+  are driven entirely by the server.
+------------------------------------------------------------------ */}}
+
+{{ define "cart-count" }}<span id="cart-count" class="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1 text-[11px] font-semibold text-noir{{ if eq .Count 0 }} hidden{{ end }}">{{ .Count }}</span>{{ end }}
+
+{{ define "cart-drawer-inner" }}
+<div id="cart-drawer-body" class="flex h-full flex-col">
+  <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
+    <h3 class="font-display text-2xl">Your bag <span class="text-gold">({{ .Count }})</span></h3>
+    <button @click="$store.drawer.open = false" class="grid h-9 w-9 place-items-center rounded-full hover:bg-white/5" aria-label="Close cart">
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+
+  {{ if eq .Count 0 }}
+  <!-- empty -->
+  <div class="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+    <svg class="h-20 w-20 text-white/15"><use href="#bottle" /></svg>
+    <p class="text-cream/60">Your bag is empty.</p>
+    <button @click="$store.drawer.open = false" class="rounded-full border border-gold/40 px-6 py-2.5 text-sm text-gold transition hover:bg-gold/10">Start sampling</button>
+  </div>
+  {{ else }}
+  <!-- items -->
+  <div class="flex-1 space-y-3 overflow-y-auto px-6 py-5">
+    {{ range .Items }}
+    <div class="flex items-center gap-4 rounded-xl border border-white/10 bg-noir-700/50 p-3">
+      <div class="grid h-16 w-14 shrink-0 place-items-center rounded-lg fam-{{ .Fam }}">
+        <svg class="h-10 w-10 text-cream/90"><use href="#bottle" /></svg>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[10px] uppercase tracking-wider text-muted">{{ .Brand }}</p>
+        <p class="truncate font-display text-lg leading-tight">{{ .Name }}</p>
+        <p class="text-xs text-cream/60">{{ .ML }}ml · ×{{ .Qty }}</p>
+      </div>
+      <div class="text-right">
+        <p class="font-display text-lg text-gold">€{{ .Subtotal }}</p>
+        <button
+          hx-delete="/cart/items/{{ .ProductID }}/{{ .ML }}"
+          hx-target="#cart-drawer-body"
+          hx-swap="outerHTML"
+          class="mt-1 text-xs text-muted underline-offset-2 hover:text-wine hover:underline"
+        >Remove</button>
+      </div>
+    </div>
+    {{ end }}
+  </div>
+
+  <!-- footer -->
+  <div class="border-t border-white/10 px-6 py-5">
+    <div class="flex items-center justify-between">
+      <span class="text-cream/70">Subtotal</span>
+      <span class="font-display text-2xl text-cream">€{{ .Total }}</span>
+    </div>
+    <p class="mt-1 text-xs text-muted">Shipping &amp; taxes calculated at checkout.</p>
+    <button
+      hx-post="/orders"
+      hx-target="#cart-drawer-body"
+      hx-swap="outerHTML"
+      class="mt-4 w-full rounded-full bg-gradient-to-r from-gold-soft to-gold-deep py-3.5 font-semibold text-noir transition hover:scale-[1.02]"
+    >
+      Checkout
+    </button>
+  </div>
+  {{ end }}
+</div>
+{{ end }}
+
+{{ define "cart-body" }}{{ template "cart-drawer-inner" . }}
+<span id="cart-count" hx-swap-oob="true" class="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1 text-[11px] font-semibold text-noir{{ if eq .Count 0 }} hidden{{ end }}">{{ .Count }}</span>{{ end }}
+
+{{ define "order-confirmation" }}
+<div id="cart-drawer-body" class="flex h-full flex-col">
+  <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
+    <h3 class="font-display text-2xl">Order placed</h3>
+    <button @click="$store.drawer.open = false" class="grid h-9 w-9 place-items-center rounded-full hover:bg-white/5" aria-label="Close cart">
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+    <span class="grid h-16 w-16 place-items-center rounded-full bg-gold/15 text-gold ring-1 ring-gold/30">
+      <svg viewBox="0 0 24 24" class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 5 5 9-11"/></svg>
+    </span>
+    <div>
+      <p class="font-display text-2xl">Thank you!</p>
+      <p class="mt-1 text-cream/60">Order #{{ .ID }} confirmed — total €{{ .Total }}.</p>
+    </div>
+    <button @click="$store.drawer.open = false" class="rounded-full border border-gold/40 px-6 py-2.5 text-sm text-gold transition hover:bg-gold/10">Keep sampling</button>
+  </div>
+</div>
+<span id="cart-count" hx-swap-oob="true" class="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1 text-[11px] font-semibold text-noir hidden">0</span>
+{{ end }}

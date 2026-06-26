@@ -174,16 +174,12 @@
             </button>
             <!-- Cart -->
             <button
-              @click="$store.cart.open = true"
+              @click="$store.drawer.open = true"
               class="relative grid h-10 w-10 place-items-center rounded-full text-cream/80 transition hover:bg-white/5 hover:text-cream"
               aria-label="Open cart"
             >
               <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-              <span
-                x-show="$store.cart.count > 0" x-cloak x-transition
-                class="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1 text-[11px] font-semibold text-noir"
-                x-text="$store.cart.count"
-              ></span>
+              {{ template "cart-count" .Cart }}
             </button>
             <!-- Mobile menu toggle -->
             <button @click="open = true" class="grid h-10 w-10 place-items-center rounded-full text-cream lg:hidden" aria-label="Open menu">
@@ -208,10 +204,8 @@
           </button>
         </div>
         <a @click="open=false" href="#collection" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Shop</a>
-        <a @click="open=false" href="#collection" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Collections</a>
         <a @click="open=false" href="#why" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Why decants</a>
         <a @click="open=false" href="#newsletter" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Request a decant</a>
-        <a @click="open=false" href="#collection" class="mt-4 rounded-full bg-gradient-to-r from-gold-soft to-gold-deep px-5 py-3 text-center font-medium text-noir">Shop the collection</a>
       </aside>
     </header>
 
@@ -286,7 +280,7 @@
       </section>
 
       <!-- ============================== COLLECTION ============================== -->
-      <section id="collection" x-data="collection()" class="border-t border-white/[.08] bg-[#131318] px-4 sm:px-6 py-20 sm:py-24">
+      <section id="collection" x-data="{ filter: 'all' }" class="border-t border-white/[.08] bg-[#131318] px-4 sm:px-6 py-20 sm:py-24">
         <div class="mx-auto max-w-7xl">
         <div class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
@@ -295,112 +289,22 @@
             <p class="mt-3 max-w-xl text-cream/60">Hand-picked icons and hidden gems. Pick your size, add to bag, fall in love and repeat.</p>
           </div>
 
-          <!-- Filter pills (instant client-side filtering with Alpine) -->
-          <!-- Production: each pill <button hx-get="/products?family=floral" hx-target="#perfume-grid" hx-swap="innerHTML"> -->
+          <!-- Filter pills — HTMX loads the grid from /products; Alpine tracks the active pill -->
           <div class="flex flex-wrap gap-2">
-            <template x-for="f in filters" :key="f.k">
-              <button
-                @click="filter = f.k"
-                :class="filter === f.k ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'"
-                class="rounded-full border px-4 py-2 text-sm transition"
-                x-text="f.l"
-              ></button>
-            </template>
+            <button @click="filter='all'"      hx-get="/products"                 hx-target="#perfume-grid" hx-swap="innerHTML" :class="filter==='all'      ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'" class="rounded-full border px-4 py-2 text-sm transition">All</button>
+            <button @click="filter='floral'"   hx-get="/products?family=floral"   hx-target="#perfume-grid" hx-swap="innerHTML" :class="filter==='floral'   ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'" class="rounded-full border px-4 py-2 text-sm transition">Floral</button>
+            <button @click="filter='woody'"    hx-get="/products?family=woody"    hx-target="#perfume-grid" hx-swap="innerHTML" :class="filter==='woody'    ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'" class="rounded-full border px-4 py-2 text-sm transition">Woody</button>
+            <button @click="filter='amber'"    hx-get="/products?family=amber"    hx-target="#perfume-grid" hx-swap="innerHTML" :class="filter==='amber'    ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'" class="rounded-full border px-4 py-2 text-sm transition">Amber</button>
+            <button @click="filter='fresh'"    hx-get="/products?family=fresh"    hx-target="#perfume-grid" hx-swap="innerHTML" :class="filter==='fresh'    ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'" class="rounded-full border px-4 py-2 text-sm transition">Fresh</button>
+            <button @click="filter='gourmand'" hx-get="/products?family=gourmand" hx-target="#perfume-grid" hx-swap="innerHTML" :class="filter==='gourmand' ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'" class="rounded-full border px-4 py-2 text-sm transition">Gourmand</button>
+            <button @click="filter='leather'"  hx-get="/products?family=leather"  hx-target="#perfume-grid" hx-swap="innerHTML" :class="filter==='leather'  ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'" class="rounded-full border px-4 py-2 text-sm transition">Leather</button>
           </div>
         </div>
 
-        <!-- Perfume grid -->
+        <!-- Perfume grid — server-rendered, refreshed by the filter pills via HTMX -->
         <div id="perfume-grid" class="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-          <template x-for="p in filtered" :key="p.id">
-            <article
-              x-data="{ sel: 1, liked: false }"
-              class="group relative flex flex-col rounded-2xl border border-white/[.09] bg-[#1a1a22] p-3 transition duration-300 hover:-translate-y-1.5 hover:border-gold/40 hover:shadow-card"
-            >
-              <!-- Art -->
-              <div class="card-art relative mb-4 grid aspect-[4/5] place-items-center rounded-xl" :class="'fam-' + p.fam">
-                <div class="absolute inset-0 rounded-xl bg-noir/15"></div>
-
-                <!-- badge -->
-                <span
-                  x-show="p.badge"
-                  class="absolute left-3 top-3 rounded-full bg-noir/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-gold backdrop-blur"
-                  x-text="p.badge"
-                ></span>
-
-                <!-- wishlist -->
-                <button
-                  @click="liked = !liked"
-                  class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-noir/50 text-cream/80 backdrop-blur transition hover:bg-noir/70"
-                  :aria-label="liked ? 'Remove from wishlist' : 'Add to wishlist'"
-                >
-                  <svg viewBox="0 0 24 24" class="h-[18px] w-[18px] transition" :class="liked ? 'fill-gold stroke-gold scale-110' : 'fill-none stroke-current'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                  </svg>
-                </button>
-
-                <svg class="relative h-28 w-28 text-cream drop-shadow-[0_14px_20px_rgba(0,0,0,.45)] transition duration-500 group-hover:scale-110"><use href="#bottle" /></svg>
-
-                <span class="absolute bottom-3 right-3 rounded-full bg-noir/55 px-2.5 py-1 text-[10px] uppercase tracking-wider text-cream/80 backdrop-blur" x-text="p.family"></span>
-              </div>
-
-              <!-- Body -->
-              <div class="flex flex-1 flex-col px-1">
-                <p class="text-[11px] uppercase tracking-[.18em] text-muted" x-text="p.brand"></p>
-                <h3 class="mt-0.5 font-display text-xl leading-tight" x-text="p.name"></h3>
-
-                <!-- rating -->
-                <div class="mt-1.5 flex items-center gap-1.5">
-                  <div class="flex">
-                    <template x-for="i in 5" :key="i">
-                      <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" :class="i <= Math.round(p.rating) ? 'fill-gold' : 'fill-white/15'"><path d="m12 2 2.9 6.3 6.9.7-5.1 4.7 1.4 6.8L12 17.8 5.9 20.5l1.4-6.8L2.2 9l6.9-.7L12 2Z"/></svg>
-                    </template>
-                  </div>
-                  <span class="text-xs text-cream/70" x-text="p.rating.toFixed(1)"></span>
-                  <span class="text-xs text-muted" x-text="'(' + p.reviews + ')'"></span>
-                </div>
-
-                <!-- notes -->
-                <div class="mt-3 flex flex-wrap gap-1.5">
-                  <template x-for="n in p.notes" :key="n">
-                    <span class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-cream/70" x-text="n"></span>
-                  </template>
-                </div>
-
-                <div class="rule-glow my-4"></div>
-
-                <!-- size selector -->
-                <div class="flex items-center gap-1.5">
-                  <template x-for="(s, i) in p.sizes" :key="i">
-                    <button
-                      @click="sel = i"
-                      :class="sel === i ? 'border-gold bg-gold/15 text-gold' : 'border-white/10 text-cream/60 hover:border-white/25'"
-                      class="rounded-lg border px-2.5 py-1 text-xs transition"
-                      x-text="s.ml + 'ml'"
-                    ></button>
-                  </template>
-                </div>
-
-                <!-- price + add -->
-                <div class="mt-4 flex items-center justify-between gap-2">
-                  <div class="leading-none">
-                    <span class="font-display text-2xl text-cream" x-text="'€' + p.sizes[sel].price"></span>
-                  </div>
-                  <!-- Production: hx-post="/cart-items" hx-vals='{...}' hx-target="#cart-count" hx-swap="outerHTML" -->
-                  <button
-                    @click="$store.cart.add({ id: p.id, brand: p.brand, name: p.name, fam: p.fam, ml: p.sizes[sel].ml, price: p.sizes[sel].price }); $store.toast.fire(p.name)"
-                    class="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold-soft to-gold-deep px-4 py-2 text-sm font-semibold text-noir transition hover:scale-[1.04] active:scale-95"
-                  >
-                    <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
-                    Add
-                  </button>
-                </div>
-              </div>
-            </article>
-          </template>
+          {{ template "product-grid" .Products }}
         </div>
-
-        <!-- empty state -->
-        <p x-show="filtered.length === 0" x-cloak class="mt-12 text-center text-cream/50">No decants in this family yet — check back soon.</p>
 
         <div class="mt-12 text-center">
           <!-- Production: hx-get="/products?page=2" hx-target="#perfume-grid" hx-swap="beforeend" -->
@@ -455,7 +359,7 @@
 
           <div
             class="relative mx-auto max-w-xl text-center"
-            x-data="{ house: ‘’, name: ‘’, notes: ‘’, done: false }"
+            x-data="{ house: '', name: '', notes: '', done: false }"
           >
             <p class="text-xs uppercase tracking-[.25em] text-gold">Can’t find it?</p>
             <h2 class="mt-3 font-display text-4xl sm:text-5xl">Request a decant</h2>
@@ -560,58 +464,15 @@
   </div>
 
   <!-- ================================ CART DRAWER ================================ -->
-  <div x-data x-show="$store.cart.open" x-cloak x-transition.opacity @click="$store.cart.open = false" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"></div>
+  <!-- Drawer open/close is the only client state Alpine owns; contents come from the server. -->
+  <div x-data x-show="$store.drawer.open" x-cloak x-transition.opacity @click="$store.drawer.open = false" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"></div>
   <aside
-    x-data x-show="$store.cart.open" x-cloak
+    x-data x-show="$store.drawer.open" x-cloak
     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
     class="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-white/10 bg-noir-800"
   >
-    <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
-      <h3 class="font-display text-2xl">Your bag <span class="text-gold" x-text="'(' + $store.cart.count + ')'"></span></h3>
-      <button @click="$store.cart.open = false" class="grid h-9 w-9 place-items-center rounded-full hover:bg-white/5" aria-label="Close cart">
-        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg>
-      </button>
-    </div>
-
-    <!-- empty -->
-    <div x-show="$store.cart.items.length === 0" class="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <svg class="h-20 w-20 text-white/15"><use href="#bottle" /></svg>
-      <p class="text-cream/60">Your bag is empty.</p>
-      <button @click="$store.cart.open = false" class="rounded-full border border-gold/40 px-6 py-2.5 text-sm text-gold transition hover:bg-gold/10">Start sampling</button>
-    </div>
-
-    <!-- items -->
-    <div x-show="$store.cart.items.length > 0" class="flex-1 space-y-3 overflow-y-auto px-6 py-5">
-      <template x-for="item in $store.cart.items" :key="item.key">
-        <div class="flex items-center gap-4 rounded-xl border border-white/10 bg-noir-700/50 p-3">
-          <div class="grid h-16 w-14 shrink-0 place-items-center rounded-lg" :class="'fam-' + item.fam">
-            <svg class="h-10 w-10 text-cream/90"><use href="#bottle" /></svg>
-          </div>
-          <div class="min-w-0 flex-1">
-            <p class="text-[10px] uppercase tracking-wider text-muted" x-text="item.brand"></p>
-            <p class="truncate font-display text-lg leading-tight" x-text="item.name"></p>
-            <p class="text-xs text-cream/60"><span x-text="item.ml + 'ml'"></span> · ×<span x-text="item.qty"></span></p>
-          </div>
-          <div class="text-right">
-            <p class="font-display text-lg text-gold" x-text="'€' + (item.price * item.qty)"></p>
-            <button @click="$store.cart.remove(item.key)" class="mt-1 text-xs text-muted underline-offset-2 hover:text-wine hover:underline">Remove</button>
-          </div>
-        </div>
-      </template>
-    </div>
-
-    <!-- footer -->
-    <div x-show="$store.cart.items.length > 0" class="border-t border-white/10 px-6 py-5">
-      <div class="flex items-center justify-between">
-        <span class="text-cream/70">Subtotal</span>
-        <span class="font-display text-2xl text-cream" x-text="'€' + $store.cart.total"></span>
-      </div>
-      <p class="mt-1 text-xs text-muted">Shipping &amp; taxes calculated at checkout.</p>
-      <button class="mt-4 w-full rounded-full bg-gradient-to-r from-gold-soft to-gold-deep py-3.5 font-semibold text-noir transition hover:scale-[1.02]">
-        Checkout
-      </button>
-    </div>
+    {{ template "cart-drawer-inner" .Cart }}
   </aside>
 
   <!-- ================================ TOAST ================================ -->
@@ -629,56 +490,12 @@
     </div>
   </div>
 
-  <!-- ================================ STORES & DATA ================================ -->
+  <!-- ================================ STORES ================================ -->
+  <!-- Catalogue and cart data are rendered server-side (Go + HTMX). Alpine only
+       keeps two tiny bits of client UI state: the cart drawer and the toast. -->
   <script>
-    // Catalogue data — in production this is rendered server-side from the
-    // model layer (see templates/partials/product-card.html).
-    window.collection = () => ({
-      filter: 'all',
-      filters: [
-        { k: 'all', l: 'All' },
-        { k: 'floral', l: 'Floral' },
-        { k: 'woody', l: 'Woody' },
-        { k: 'amber', l: 'Amber' },
-        { k: 'fresh', l: 'Fresh' },
-        { k: 'gourmand', l: 'Gourmand' },
-        { k: 'leather', l: 'Leather' },
-      ],
-      perfumes: [
-        { id: 1, brand: 'Maison Noir',     name: 'Oud Royale',    family: 'Woody',    fam: 'woody',    rating: 4.8, reviews: 214, badge: 'Bestseller', notes: ['Oud', 'Saffron', 'Rose'],          sizes: [{ ml: 2, price: 16 }, { ml: 5, price: 34 }, { ml: 10, price: 58 }] },
-        { id: 2, brand: 'Atelier Lumière', name: 'Fleur de Minuit', family: 'Floral', fam: 'floral',   rating: 4.6, reviews: 132, badge: 'New',         notes: ['Tuberose', 'Jasmine', 'Musk'],     sizes: [{ ml: 2, price: 13 }, { ml: 5, price: 27 }, { ml: 10, price: 46 }] },
-        { id: 3, brand: 'Botanica',        name: 'Vert Sauvage',  family: 'Fresh',    fam: 'fresh',    rating: 4.5, reviews: 98,  badge: '',            notes: ['Bergamot', 'Vetiver', 'Mint'],     sizes: [{ ml: 2, price: 11 }, { ml: 5, price: 22 }, { ml: 10, price: 38 }] },
-        { id: 4, brand: 'Maison Noir',     name: 'Ambre Solaire', family: 'Amber',    fam: 'amber',    rating: 4.9, reviews: 301, badge: 'Bestseller', notes: ['Amber', 'Vanilla', 'Tonka'],       sizes: [{ ml: 2, price: 18 }, { ml: 5, price: 38 }, { ml: 10, price: 64 }] },
-        { id: 5, brand: 'Côte Marine',     name: 'Sel & Soleil',  family: 'Aquatic',  fam: 'fresh',    rating: 4.4, reviews: 76,  badge: '',            notes: ['Sea Salt', 'Bergamot', 'Driftwood'], sizes: [{ ml: 2, price: 12 }, { ml: 5, price: 24 }, { ml: 10, price: 42 }] },
-        { id: 6, brand: 'Atelier Lumière', name: 'Rose Noire',    family: 'Floral',   fam: 'floral',   rating: 4.7, reviews: 187, badge: 'Limited',     notes: ['Rose', 'Patchouli', 'Oud'],        sizes: [{ ml: 2, price: 17 }, { ml: 5, price: 36 }, { ml: 10, price: 60 }] },
-        { id: 7, brand: 'Sucre Brûlé',     name: 'Caramel Tabac', family: 'Gourmand', fam: 'gourmand', rating: 4.6, reviews: 142, badge: '',            notes: ['Tonka', 'Tobacco', 'Caramel'],     sizes: [{ ml: 2, price: 15 }, { ml: 5, price: 31 }, { ml: 10, price: 53 }] },
-        { id: 8, brand: 'Maison Noir',     name: 'Cuir Velvet',   family: 'Leather',  fam: 'leather',  rating: 4.8, reviews: 166, badge: 'New',         notes: ['Leather', 'Iris', 'Cedar'],        sizes: [{ ml: 2, price: 19 }, { ml: 5, price: 39 }, { ml: 10, price: 66 }] },
-      ],
-      get filtered() {
-        return this.filter === 'all' ? this.perfumes : this.perfumes.filter((p) => p.fam === this.filter);
-      },
-    });
-
     document.addEventListener('alpine:init', () => {
-      Alpine.store('cart', {
-        items: [],
-        open: false,
-        add(p) {
-          const key = p.id + '-' + p.ml;
-          const existing = this.items.find((i) => i.key === key);
-          if (existing) existing.qty++;
-          else this.items.push({ key, ...p, qty: 1 });
-        },
-        remove(key) {
-          this.items = this.items.filter((i) => i.key !== key);
-        },
-        get count() {
-          return this.items.reduce((n, i) => n + i.qty, 0);
-        },
-        get total() {
-          return this.items.reduce((s, i) => s + i.price * i.qty, 0);
-        },
-      });
+      Alpine.store('drawer', { open: false });
 
       Alpine.store('toast', {
         show: false,

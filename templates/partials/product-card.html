@@ -1,31 +1,29 @@
 {{/* ------------------------------------------------------------------
   product-card.html — server-rendered perfume card (HTMX partial)
 
-  Mirrors the Alpine-rendered cards in templates/index.html, but driven by
-  the model layer. Render the grid from a handler like:
+  Rendered from the model layer by the product handler. The grid wrapper
+  "product-grid" ranges over a slice of product.View; "product-card" renders
+  one card. Alpine still owns the client-side size selector and wishlist; Go
+  owns the data and HTMX wires the add-to-cart button to the server.
 
-    {{ range .Products }}{{ template "product-card" . }}{{ end }}
-
-  Expected fields on the product struct (PascalCase per project rules):
-    ID        int
-    Brand     string
-    Name      string
-    Family    string   // display label, e.g. "Woody"
-    Fam       string   // gradient/filter key: woody|floral|fresh|amber|gourmand|leather
-    Rating    float64
-    Reviews   int
-    Badge     string   // "" for none
-    Notes     []string
-    SizesJSON template.JS  // e.g. [{"ml":2,"price":16},{"ml":5,"price":34},{"ml":10,"price":58}]
-
-  Alpine still owns the client-side size selector, wishlist and add-to-cart;
-  Go owns the data. The two coexist cleanly.
+  product.View fields (Product is embedded, so its fields are promoted):
+    ID, Brand, Name, Family, Fam, Rating, Reviews, Badge, Notes []string
+    SizesJSON template.JS  // e.g. [{"ml":2,"price":16},{"ml":5,"price":34}]
 ------------------------------------------------------------------ */}}
+
+{{ define "product-grid" }}
+{{ if . }}
+  {{ range . }}{{ template "product-card" . }}{{ end }}
+{{ else }}
+  <p class="col-span-full py-12 text-center text-cream/50">No decants in this family yet — check back soon.</p>
+{{ end }}
+{{ end }}
+
 {{ define "product-card" }}
 <article
   x-data="{ sel: 1, liked: false, sizes: {{ .SizesJSON }} }"
   data-family="{{ .Fam }}"
-  class="group relative flex flex-col rounded-2xl border border-white/10 bg-noir-800/60 p-3 backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:border-gold/40 hover:shadow-card"
+  class="group relative flex flex-col rounded-2xl border border-white/[.09] bg-[#1a1a22] p-3 transition duration-300 hover:-translate-y-1.5 hover:border-gold/40 hover:shadow-card"
 >
   <!-- Art -->
   <div class="card-art relative mb-4 grid aspect-[4/5] place-items-center rounded-xl fam-{{ .Fam }}">
@@ -73,9 +71,11 @@
 
     <div class="rule-glow my-4"></div>
 
+    <!-- size selector (Alpine-driven) -->
     <div class="flex items-center gap-1.5">
       <template x-for="(s, i) in sizes" :key="i">
         <button
+          type="button"
           @click="sel = i"
           :class="sel === i ? 'border-gold bg-gold/15 text-gold' : 'border-white/10 text-cream/60 hover:border-white/25'"
           class="rounded-lg border px-2.5 py-1 text-xs transition"
@@ -84,20 +84,25 @@
       </template>
     </div>
 
-    <div class="mt-4 flex items-center justify-between gap-2">
+    <!-- price + add (HTMX posts the selected size to the cart) -->
+    <form
+      hx-post="/cart/items"
+      hx-target="#cart-drawer-body"
+      hx-swap="outerHTML"
+      @submit="$store.toast.fire('{{ .Name }}'); $store.drawer.open = true"
+      class="mt-4 flex items-center justify-between gap-2"
+    >
+      <input type="hidden" name="product_id" value="{{ .ID }}" />
+      <input type="hidden" name="ml" :value="sizes[sel].ml" />
       <span class="font-display text-2xl text-cream" x-text="'€' + sizes[sel].price"></span>
       <button
-        hx-post="/cart-items"
-        hx-vals="js:{ id: {{ .ID }}, ml: sizes[sel].ml }"
-        hx-target="#cart-count"
-        hx-swap="outerHTML"
-        @click="$store.cart.add({ id: {{ .ID }}, brand: '{{ .Brand }}', name: '{{ .Name }}', fam: '{{ .Fam }}', ml: sizes[sel].ml, price: sizes[sel].price }); $store.toast.fire('{{ .Name }}')"
+        type="submit"
         class="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold-soft to-gold-deep px-4 py-2 text-sm font-semibold text-noir transition hover:scale-[1.04] active:scale-95"
       >
         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
         Add
       </button>
-    </div>
+    </form>
   </div>
 </article>
 {{ end }}

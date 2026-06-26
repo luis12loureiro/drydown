@@ -26,39 +26,53 @@ Later will include our own fragrance line.
 
 ## Project structure
 drydown/
-├── main.go                  # Entry point
+├── main.go
 ├── go.mod
 ├── go.sum
 │
-├── internal/                # App code
-│   ├── handler/             # HTTP handlers (products, cart, auth...)
-│   │   ├── auth.go
-│   │   ├── product.go
+├── internal/
+│   │
+│   ├── product/
+│   │   ├── product.go           # Domain struct + rules
+│   │   ├── repository.go        # Interface (port)
+│   │   ├── service.go           # Business logic
+│   │   ├── handler.go           # HTTP handler
+│   │   └── sqlite.go            # DB implementation (adapter)
+│   │
+│   ├── order/
+│   │   ├── order.go
+│   │   ├── repository.go
+│   │   ├── service.go
+│   │   ├── handler.go
+│   │   └── sqlite.go
+│   │
+│   ├── cart/
 │   │   ├── cart.go
-│   │   └── order.go
+│   │   ├── repository.go
+│   │   ├── service.go
+│   │   ├── handler.go
+│   │   └── sqlite.go
 │   │
-│   ├── model/               # DB queries + structs
+│   ├── user/
 │   │   ├── user.go
-│   │   ├── product.go
-│   │   └── order.go
+│   │   ├── repository.go
+│   │   ├── service.go
+│   │   ├── handler.go
+│   │   └── sqlite.go
 │   │
-│   └── middleware/          # Auth, logging, etc
-│       └── auth.go
+│   └── payment/
+│       ├── payment.go           # Interface
+│       └── stripe.go            # Stripe implementation
 │
-├── templates/               # HTML templates
-│   ├── layout.html          # Base layout (nav, footer)
+├── templates/
+│   ├── layout.html
 │   ├── index.html
-│   ├── product.html
-│   ├── cart.html
-│   └── partials/            # HTMX fragments
+│   └── partials/
 │       ├── product-card.html
 │       ├── cart-drawer.html
 │       └── search-results.html
 │
-└── static/                  # CSS, JS, images
+└── static/
     ├── css/
-    │   └── app.css          # Tailwind
     ├── js/
-    │   ├── htmx.min.js
-    │   └── alpine.min.js
     └── img/
