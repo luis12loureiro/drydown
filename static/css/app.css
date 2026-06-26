@@ -9,9 +9,17 @@
      <link rel="stylesheet" href="/static/css/app.css">
    ============================================================ */
 
+/*
+  Section colour map (two-tone + chrome):
+  Header / Footer  →  #0d0d13
+  Section A (hero, why)  →  #0b0b0f  (body default)
+  Section B (collection, newsletter)  →  #131318
+  Cards on A  →  #131318
+  Cards on B  →  #1a1a22
+*/
 :root {
   --noir: #0b0b0f;
-  --ink: #121219;
+  --ink: #111115;
   --cream: #f4efe6;
   --muted: #a39a88;
   --gold: #a7c4a0;
@@ -27,9 +35,9 @@ body {
   background-color: var(--noir);
   color: var(--cream);
   background-image:
-    radial-gradient(60rem 60rem at 82% -12%, rgba(167, 196, 160, 0.07), transparent 60%),
-    radial-gradient(50rem 50rem at -12% 18%, rgba(244, 239, 230, 0.03), transparent 55%),
-    radial-gradient(42rem 42rem at 50% 118%, rgba(167, 196, 160, 0.04), transparent 60%);
+    radial-gradient(60rem 60rem at 82% -12%, rgba(255,255,255,.02), transparent 60%),
+    radial-gradient(50rem 50rem at -12% 18%, rgba(255,255,255,.01), transparent 55%),
+    radial-gradient(42rem 42rem at 50% 118%, rgba(255,255,255,.01), transparent 60%);
   background-attachment: fixed;
 }
 
