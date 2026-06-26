@@ -22,15 +22,15 @@
             noir: { DEFAULT: '#0b0b0f', 900: '#0b0b0f', 800: '#121219', 700: '#181821', 600: '#20202b' },
             cream: '#f4efe6',
             muted: '#a39a88',
-            gold: { DEFAULT: '#e3b775', deep: '#c8924a', soft: '#f6e3be' },
-            wine: '#7c3a52',
+            gold: { DEFAULT: '#a7c4a0', deep: '#7c9e76', soft: '#cfe0c9' },
+            wine: '#4f7a63',
           },
           fontFamily: {
             display: ['"Playfair Display"', 'ui-serif', 'Georgia', 'serif'],
             sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
           },
           boxShadow: {
-            glow: '0 0 0 1px rgba(227,183,117,.25), 0 24px 70px -24px rgba(227,183,117,.45)',
+            glow: '0 0 0 1px rgba(167,196,160,.25), 0 24px 70px -24px rgba(167,196,160,.40)',
             card: '0 28px 70px -32px rgba(0,0,0,.85)',
           },
           keyframes: {
@@ -60,15 +60,15 @@
   <style>
     :root {
       --noir:#0b0b0f; --ink:#121219; --cream:#f4efe6; --muted:#a39a88;
-      --gold:#e3b775; --gold-deep:#c8924a; --gold-soft:#f6e3be; --wine:#7c3a52;
+      --gold:#a7c4a0; --gold-deep:#7c9e76; --gold-soft:#cfe0c9; --wine:#4f7a63;
     }
     * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
     body {
       background-color: var(--noir);
       background-image:
-        radial-gradient(60rem 60rem at 82% -12%, rgba(227,183,117,.10), transparent 60%),
-        radial-gradient(50rem 50rem at -12% 18%, rgba(124,58,82,.14), transparent 55%),
-        radial-gradient(42rem 42rem at 50% 118%, rgba(227,183,117,.06), transparent 60%);
+        radial-gradient(60rem 60rem at 82% -12%, rgba(167,196,160,.07), transparent 60%),
+        radial-gradient(50rem 50rem at -12% 18%, rgba(244,239,230,.03), transparent 55%),
+        radial-gradient(42rem 42rem at 50% 118%, rgba(167,196,160,.04), transparent 60%);
       background-attachment: fixed;
     }
     ::selection { background: var(--gold); color: #1a1306; }
@@ -82,18 +82,20 @@
     ::-webkit-scrollbar-thumb { background: #2a2a33; border-radius: 99px; border: 3px solid #0b0b0f; }
     ::-webkit-scrollbar-thumb:hover { background: var(--gold-deep); }
     .text-gradient {
-      background: linear-gradient(100deg, #f6e3be 0%, #e3b775 28%, #c8924a 52%, #f6e3be 100%);
+      background: linear-gradient(100deg, #cfe0c9 0%, #a7c4a0 28%, #7c9e76 52%, #cfe0c9 100%);
       background-size: 200% auto; -webkit-background-clip: text; background-clip: text;
       color: transparent; animation: shimmer 7s linear infinite;
     }
     @keyframes shimmer { to { background-position: 200% center; } }
-    .rule-glow { height: 1px; background: linear-gradient(90deg, transparent, rgba(227,183,117,.5), transparent); }
+    .rule-glow { height: 1px; background: linear-gradient(90deg, transparent, rgba(244,239,230,.16), transparent); }
     .fam-woody    { background: linear-gradient(140deg, #3a2415, #6b4423 52%, #caa46a); }
     .fam-floral   { background: linear-gradient(140deg, #4a1f33, #a23b67 52%, #f0a7c4); }
     .fam-fresh    { background: linear-gradient(140deg, #0f3a39, #1f7a6e 52%, #7fe0c9); }
     .fam-amber    { background: linear-gradient(140deg, #4a2a0a, #b9762a 52%, #f4cd7a); }
     .fam-gourmand { background: linear-gradient(140deg, #3a210f, #7a4a22 52%, #d8a066); }
     .fam-leather  { background: linear-gradient(140deg, #241b14, #5a3f2c 52%, #9c7a52); }
+    .fam-sage     { background: linear-gradient(140deg, #25342a, #4f7a63 52%, #a7c4a0); }
+    .fam-showcase { background: linear-gradient(150deg, #14181b, #1e2924 55%, #46705a); }
     .card-art { position: relative; overflow: hidden; }
     .card-art::after {
       content: ""; position: absolute; inset: 0;
@@ -126,8 +128,8 @@
   <div class="relative z-10">
 
     <!-- ============================ ANNOUNCEMENT BAR ============================ -->
-    <div class="bg-gradient-to-r from-wine/30 via-noir-800 to-wine/30 border-b border-white/5">
-      <p class="mx-auto max-w-7xl px-4 py-2.5 text-center text-[11px] sm:text-xs tracking-[.18em] uppercase text-gold/90">
+    <div class="bg-gradient-to-r from-wine/15 via-noir-800 to-wine/15 border-b border-white/5">
+      <p class="mx-auto max-w-7xl px-4 py-2.5 text-center text-[11px] sm:text-xs tracking-[.18em] uppercase text-cream/90">
         <span class="text-gold">✦</span>&nbsp; Complimentary shipping over €50 · 100% authentic, decanted fresh &nbsp;<span class="text-gold">✦</span>
       </p>
     </div>
@@ -154,27 +156,27 @@
 
           <!-- Desktop nav -->
           <div class="hidden items-center gap-9 lg:flex">
-            <a href="#collection" class="text-sm text-cream/80 transition hover:text-gold">Shop</a>
-            <a href="#collection" class="text-sm text-cream/80 transition hover:text-gold">Collections</a>
-            <a href="#why" class="text-sm text-cream/80 transition hover:text-gold">Why decants</a>
-            <a href="#newsletter" class="text-sm text-cream/80 transition hover:text-gold">Journal</a>
+            <a href="#collection" class="text-sm text-cream/80 transition hover:text-cream">Shop</a>
+            <a href="#collection" class="text-sm text-cream/80 transition hover:text-cream">Collections</a>
+            <a href="#why" class="text-sm text-cream/80 transition hover:text-cream">Why decants</a>
+            <a href="#newsletter" class="text-sm text-cream/80 transition hover:text-cream">Journal</a>
           </div>
 
           <!-- Actions -->
           <div class="flex items-center gap-1 sm:gap-2">
             <!-- Search (HTMX-ready) -->
             <!-- Production: <input hx-get="/search" hx-trigger="keyup changed delay:300ms" hx-target="#search-results"> -->
-            <button class="hidden sm:grid h-10 w-10 place-items-center rounded-full text-cream/70 transition hover:bg-white/5 hover:text-gold" aria-label="Search">
+            <button class="hidden sm:grid h-10 w-10 place-items-center rounded-full text-cream/70 transition hover:bg-white/5 hover:text-cream" aria-label="Search">
               <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
             </button>
             <!-- Account -->
-            <button class="hidden sm:grid h-10 w-10 place-items-center rounded-full text-cream/70 transition hover:bg-white/5 hover:text-gold" aria-label="Account">
+            <button class="hidden sm:grid h-10 w-10 place-items-center rounded-full text-cream/70 transition hover:bg-white/5 hover:text-cream" aria-label="Account">
               <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             </button>
             <!-- Cart -->
             <button
               @click="$store.cart.open = true"
-              class="relative grid h-10 w-10 place-items-center rounded-full text-cream/80 transition hover:bg-white/5 hover:text-gold"
+              class="relative grid h-10 w-10 place-items-center rounded-full text-cream/80 transition hover:bg-white/5 hover:text-cream"
               aria-label="Open cart"
             >
               <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
@@ -206,10 +208,10 @@
             <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg>
           </button>
         </div>
-        <a @click="open=false" href="#collection" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-gold">Shop</a>
-        <a @click="open=false" href="#collection" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-gold">Collections</a>
-        <a @click="open=false" href="#why" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-gold">Why decants</a>
-        <a @click="open=false" href="#newsletter" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-gold">Journal</a>
+        <a @click="open=false" href="#collection" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Shop</a>
+        <a @click="open=false" href="#collection" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Collections</a>
+        <a @click="open=false" href="#why" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Why decants</a>
+        <a @click="open=false" href="#newsletter" class="rounded-xl px-3 py-3 text-lg text-cream/90 hover:bg-white/5 hover:text-cream">Journal</a>
         <a @click="open=false" href="#collection" class="mt-4 rounded-full bg-gradient-to-r from-gold-soft to-gold-deep px-5 py-3 text-center font-medium text-noir">Shop the collection</a>
       </aside>
     </header>
@@ -218,13 +220,13 @@
       <!-- ================================ HERO ================================ -->
       <section class="relative overflow-hidden">
         <!-- decorative orbs -->
-        <div class="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full bg-wine/20 blur-3xl"></div>
+        <div class="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full bg-wine/10 blur-3xl"></div>
         <div class="pointer-events-none absolute -right-24 -top-10 h-96 w-96 rounded-full bg-gold/10 blur-3xl"></div>
 
         <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 py-16 sm:py-24 lg:grid-cols-2 lg:py-28">
           <!-- Copy -->
           <div>
-            <span class="animate-fadeup inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs tracking-[.18em] uppercase text-gold" style="animation-delay:.05s">
+            <span class="animate-fadeup inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs tracking-[.18em] uppercase text-cream" style="animation-delay:.05s">
               <span class="h-1.5 w-1.5 rounded-full bg-gold"></span> Authentic decants · 500+ houses
             </span>
 
@@ -244,7 +246,7 @@
                 Shop the collection
                 <svg viewBox="0 0 24 24" class="h-4 w-4 transition group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </a>
-              <a href="#why" class="inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 font-medium text-cream/90 transition hover:border-gold/50 hover:text-gold">
+              <a href="#why" class="inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 font-medium text-cream/90 transition hover:border-gold/50 hover:text-cream">
                 How decants work
               </a>
             </div>
@@ -252,15 +254,15 @@
             <!-- mini stats -->
             <div class="animate-fadeup mt-12 flex divide-x divide-white/10" style="animation-delay:.45s">
               <div class="pr-6">
-                <p class="font-display text-3xl text-gold">500+</p>
+                <p class="font-display text-3xl text-cream">500+</p>
                 <p class="text-xs uppercase tracking-wider text-muted">Fragrances</p>
               </div>
               <div class="px-6">
-                <p class="font-display text-3xl text-gold">100%</p>
+                <p class="font-display text-3xl text-cream">100%</p>
                 <p class="text-xs uppercase tracking-wider text-muted">Authentic</p>
               </div>
               <div class="pl-6">
-                <p class="font-display text-3xl text-gold">12k+</p>
+                <p class="font-display text-3xl text-cream">12k+</p>
                 <p class="text-xs uppercase tracking-wider text-muted">Happy noses</p>
               </div>
             </div>
@@ -272,9 +274,8 @@
               <div class="absolute h-80 w-80 rounded-full border border-dashed border-gold/20 animate-spinslow"></div>
               <div class="absolute h-64 w-64 rounded-full bg-gold/10 blur-2xl"></div>
 
-              <div class="relative grid h-72 w-60 place-items-center overflow-hidden rounded-[2rem] border border-white/10 fam-amber shadow-card">
-                <div class="absolute inset-0 bg-noir/20"></div>
-                <svg class="relative h-44 w-44 text-cream animate-float drop-shadow-[0_20px_30px_rgba(0,0,0,.5)]"><use href="#bottle" /></svg>
+              <div class="relative grid h-72 w-60 place-items-center overflow-hidden rounded-[2rem] border border-white/10 fam-showcase shadow-card">
+                <svg class="relative h-44 w-44 text-cream animate-float drop-shadow-[0_20px_30px_rgba(0,0,0,.45)]"><use href="#bottle" /></svg>
               </div>
 
               <!-- orbiting note chips -->
@@ -289,9 +290,9 @@
         <!-- trust marquee -->
         <div class="border-y border-white/5 bg-noir-800/40 py-4">
           <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 text-center text-xs uppercase tracking-[.2em] text-muted">
-            <span>Decanted fresh to order</span><span class="text-gold/40">◆</span>
-            <span>2 ml · 5 ml · 10 ml</span><span class="text-gold/40">◆</span>
-            <span>Sealed for travel</span><span class="text-gold/40">◆</span>
+            <span>Decanted fresh to order</span><span class="text-cream/40">◆</span>
+            <span>2 ml · 5 ml · 10 ml</span><span class="text-cream/40">◆</span>
+            <span>Sealed for travel</span><span class="text-cream/40">◆</span>
             <span>Designer &amp; niche</span>
           </div>
         </div>
@@ -312,7 +313,7 @@
             <template x-for="f in filters" :key="f.k">
               <button
                 @click="filter = f.k"
-                :class="filter === f.k ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-gold'"
+                :class="filter === f.k ? 'border-gold bg-gold text-noir' : 'border-white/15 text-cream/70 hover:border-gold/50 hover:text-cream'"
                 class="rounded-full border px-4 py-2 text-sm transition"
                 x-text="f.l"
               ></button>
@@ -415,7 +416,7 @@
 
         <div class="mt-12 text-center">
           <!-- Production: hx-get="/products?page=2" hx-target="#perfume-grid" hx-swap="beforeend" -->
-          <a href="#collection" class="inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 font-medium text-cream/90 transition hover:border-gold/50 hover:text-gold">
+          <a href="#collection" class="inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 font-medium text-cream/90 transition hover:border-gold/50 hover:text-cream">
             View all 500+ decants
             <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -460,7 +461,7 @@
       <section id="newsletter" class="mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-24">
         <div class="relative overflow-hidden rounded-3xl border border-gold/20 bg-gradient-to-br from-noir-700 to-noir-800 px-6 py-14 sm:px-12">
           <div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-gold/10 blur-3xl"></div>
-          <div class="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-wine/20 blur-3xl"></div>
+          <div class="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-wine/10 blur-3xl"></div>
 
           <div class="relative mx-auto max-w-xl text-center" x-data="{ email: '', done: false }">
             <p class="text-xs uppercase tracking-[.25em] text-gold">The inner circle</p>
@@ -505,16 +506,16 @@
               Authentic fragrance decants for the curious nose. Sample more, commit smarter, smell unforgettable.
             </p>
             <div class="mt-6 flex gap-3">
-              <a href="#" aria-label="Instagram" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-gold">
+              <a href="#" aria-label="Instagram" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-cream">
                 <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
               </a>
-              <a href="#" aria-label="TikTok" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-gold">
+              <a href="#" aria-label="TikTok" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-cream">
                 <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor"><path d="M16 3c.3 2.1 1.6 3.6 3.7 3.9v2.6c-1.4.1-2.7-.3-3.7-1v5.9a5.7 5.7 0 1 1-5.7-5.7c.3 0 .6 0 .9.1v2.7a3 3 0 1 0 2.1 2.9V3H16Z"/></svg>
               </a>
-              <a href="#" aria-label="Pinterest" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-gold">
+              <a href="#" aria-label="Pinterest" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-cream">
                 <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.1-2 .1-2.9l1.1-4.6s-.3-.6-.3-1.4c0-1.3.8-2.3 1.7-2.3.8 0 1.2.6 1.2 1.4 0 .8-.5 2-.8 3.2-.2.9.5 1.7 1.4 1.7 1.7 0 2.9-2.2 2.9-4.7 0-1.9-1.3-3.4-3.7-3.4a4.2 4.2 0 0 0-4.4 4.2c0 .8.3 1.4.6 1.8.1.2.1.3.1.5l-.2.9c0 .3-.2.4-.5.2-1.2-.5-1.8-1.9-1.8-3.5 0-2.6 2.2-5.7 6.6-5.7 3.5 0 5.8 2.5 5.8 5.3 0 3.6-2 6.2-4.9 6.2-1 0-1.9-.5-2.2-1.1l-.6 2.4c-.2.8-.7 1.6-1 2.2A10 10 0 1 0 12 2Z"/></svg>
               </a>
-              <a href="#" aria-label="X" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-gold">
+              <a href="#" aria-label="X" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-cream/70 transition hover:border-gold/50 hover:text-cream">
                 <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M18.2 2H21l-6.5 7.4L22 22h-6l-4.7-6.1L5.9 22H3l7-8L2 2h6.2l4.2 5.6L18.2 2Zm-1 18h1.6L7 4H5.3l11.9 16Z"/></svg>
               </a>
             </div>
@@ -522,31 +523,31 @@
 
           <!-- link columns -->
           <div>
-            <h4 class="text-xs uppercase tracking-[.2em] text-gold">Shop</h4>
+            <h4 class="text-xs uppercase tracking-[.2em] text-cream">Shop</h4>
             <ul class="mt-4 space-y-3 text-sm text-cream/60">
-              <li><a href="#collection" class="hover:text-gold">New arrivals</a></li>
-              <li><a href="#collection" class="hover:text-gold">Bestsellers</a></li>
-              <li><a href="#collection" class="hover:text-gold">Niche houses</a></li>
-              <li><a href="#collection" class="hover:text-gold">Sample sets</a></li>
-              <li><a href="#collection" class="hover:text-gold">Gift cards</a></li>
+              <li><a href="#collection" class="hover:text-cream">New arrivals</a></li>
+              <li><a href="#collection" class="hover:text-cream">Bestsellers</a></li>
+              <li><a href="#collection" class="hover:text-cream">Niche houses</a></li>
+              <li><a href="#collection" class="hover:text-cream">Sample sets</a></li>
+              <li><a href="#collection" class="hover:text-cream">Gift cards</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs uppercase tracking-[.2em] text-gold">Discover</h4>
+            <h4 class="text-xs uppercase tracking-[.2em] text-cream">Discover</h4>
             <ul class="mt-4 space-y-3 text-sm text-cream/60">
-              <li><a href="#why" class="hover:text-gold">Why decants</a></li>
-              <li><a href="#newsletter" class="hover:text-gold">The Journal</a></li>
-              <li><a href="#collection" class="hover:text-gold">Scent finder</a></li>
-              <li><a href="#collection" class="hover:text-gold">Notes guide</a></li>
+              <li><a href="#why" class="hover:text-cream">Why decants</a></li>
+              <li><a href="#newsletter" class="hover:text-cream">The Journal</a></li>
+              <li><a href="#collection" class="hover:text-cream">Scent finder</a></li>
+              <li><a href="#collection" class="hover:text-cream">Notes guide</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs uppercase tracking-[.2em] text-gold">Support</h4>
+            <h4 class="text-xs uppercase tracking-[.2em] text-cream">Support</h4>
             <ul class="mt-4 space-y-3 text-sm text-cream/60">
-              <li><a href="#" class="hover:text-gold">Shipping &amp; returns</a></li>
-              <li><a href="#" class="hover:text-gold">Track order</a></li>
-              <li><a href="#" class="hover:text-gold">Authenticity</a></li>
-              <li><a href="#" class="hover:text-gold">Contact us</a></li>
+              <li><a href="#" class="hover:text-cream">Shipping &amp; returns</a></li>
+              <li><a href="#" class="hover:text-cream">Track order</a></li>
+              <li><a href="#" class="hover:text-cream">Authenticity</a></li>
+              <li><a href="#" class="hover:text-cream">Contact us</a></li>
             </ul>
           </div>
         </div>

@@ -14,10 +14,10 @@
   --ink: #121219;
   --cream: #f4efe6;
   --muted: #a39a88;
-  --gold: #e3b775;
-  --gold-deep: #c8924a;
-  --gold-soft: #f6e3be;
-  --wine: #7c3a52;
+  --gold: #a7c4a0;
+  --gold-deep: #7c9e76;
+  --gold-soft: #cfe0c9;
+  --wine: #4f7a63;
 }
 
 * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -27,9 +27,9 @@ body {
   background-color: var(--noir);
   color: var(--cream);
   background-image:
-    radial-gradient(60rem 60rem at 82% -12%, rgba(227, 183, 117, 0.10), transparent 60%),
-    radial-gradient(50rem 50rem at -12% 18%, rgba(124, 58, 82, 0.14), transparent 55%),
-    radial-gradient(42rem 42rem at 50% 118%, rgba(227, 183, 117, 0.06), transparent 60%);
+    radial-gradient(60rem 60rem at 82% -12%, rgba(167, 196, 160, 0.07), transparent 60%),
+    radial-gradient(50rem 50rem at -12% 18%, rgba(244, 239, 230, 0.03), transparent 55%),
+    radial-gradient(42rem 42rem at 50% 118%, rgba(167, 196, 160, 0.04), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -59,7 +59,7 @@ body::before {
 
 /* Shimmering gold display text */
 .text-gradient {
-  background: linear-gradient(100deg, #f6e3be 0%, #e3b775 28%, #c8924a 52%, #f6e3be 100%);
+  background: linear-gradient(100deg, #cfe0c9 0%, #a7c4a0 28%, #7c9e76 52%, #cfe0c9 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -71,7 +71,7 @@ body::before {
 /* Hairline divider with a soft gold glow in the middle */
 .rule-glow {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(227, 183, 117, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(244, 239, 230, 0.16), transparent);
 }
 
 /* Scent-family gradients used as the card "bottle art" backdrop */
@@ -81,6 +81,8 @@ body::before {
 .fam-amber    { background: linear-gradient(140deg, #4a2a0a, #b9762a 52%, #f4cd7a); }
 .fam-gourmand { background: linear-gradient(140deg, #3a210f, #7a4a22 52%, #d8a066); }
 .fam-leather  { background: linear-gradient(140deg, #241b14, #5a3f2c 52%, #9c7a52); }
+.fam-sage     { background: linear-gradient(140deg, #25342a, #4f7a63 52%, #a7c4a0); }
+.fam-showcase { background: linear-gradient(150deg, #14181b, #1e2924 55%, #46705a); }
 
 /* Glassy sweep that crosses the card art on hover */
 .card-art { position: relative; overflow: hidden; }
