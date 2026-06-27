@@ -12,7 +12,7 @@ type MemoryRepository struct {
 }
 
 // NewMemoryRepository returns a repository pre-loaded with the seed catalogue.
-func NewMemoryRepository() *MemoryRepository {
+func NewMemoryRepository() Repository {
 	r := &MemoryRepository{
 		products: make(map[int]Product),
 		nextID:   1,

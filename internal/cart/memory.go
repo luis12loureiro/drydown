@@ -10,7 +10,7 @@ type MemoryRepository struct {
 }
 
 // NewMemoryRepository returns an empty in-memory cart store.
-func NewMemoryRepository() *MemoryRepository {
+func NewMemoryRepository() Repository {
 	return &MemoryRepository{carts: make(map[string]Cart)}
 }
 

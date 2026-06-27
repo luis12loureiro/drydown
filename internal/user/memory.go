@@ -11,7 +11,7 @@ type MemoryRepository struct {
 }
 
 // NewMemoryRepository returns an empty in-memory user store.
-func NewMemoryRepository() *MemoryRepository {
+func NewMemoryRepository() Repository {
 	return &MemoryRepository{
 		users:  make(map[int]User),
 		nextID: 1,

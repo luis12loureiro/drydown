@@ -11,7 +11,7 @@ type MemoryRepository struct {
 }
 
 // NewMemoryRepository returns an empty in-memory order store.
-func NewMemoryRepository() *MemoryRepository {
+func NewMemoryRepository() Repository {
 	return &MemoryRepository{
 		orders: make(map[int]Order),
 		nextID: 1,
