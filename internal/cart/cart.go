@@ -8,13 +8,13 @@ var ErrNotFound = errors.New("cart: not found")
 
 // Item is a single line in the cart: a product at a chosen decant size.
 type Item struct {
-	ProductID int
-	Brand     string
-	Name      string
-	Fam       string
-	ML        int
-	Price     int // unit price for the chosen size, in euros
-	Qty       int
+	ProductUUID string
+	Brand       string
+	Name        string
+	Fam         string
+	ML          int
+	Price       int // unit price for the chosen size, in euros
+	Qty         int
 }
 
 // Subtotal is the line total in euros.
@@ -22,9 +22,9 @@ func (i Item) Subtotal() int {
 	return i.Price * i.Qty
 }
 
-// Cart is a visitor's bag, identified by an opaque session id.
+// Cart is a visitor's bag, identified by an opaque session uuid.
 type Cart struct {
-	ID    string
+	UUID  string
 	Items []Item
 }
 
@@ -49,7 +49,7 @@ func (c Cart) Total() int {
 // Add inserts a line, merging quantity when the same product+size is present.
 func (c *Cart) Add(item Item) {
 	for i := range c.Items {
-		if c.Items[i].ProductID == item.ProductID && c.Items[i].ML == item.ML {
+		if c.Items[i].ProductUUID == item.ProductUUID && c.Items[i].ML == item.ML {
 			c.Items[i].Qty += item.Qty
 			return
 		}
@@ -58,10 +58,10 @@ func (c *Cart) Add(item Item) {
 }
 
 // Remove drops the line matching the product+size.
-func (c *Cart) Remove(productID, ml int) {
+func (c *Cart) Remove(productUUID string, ml int) {
 	kept := c.Items[:0]
 	for _, it := range c.Items {
-		if it.ProductID == productID && it.ML == ml {
+		if it.ProductUUID == productUUID && it.ML == ml {
 			continue
 		}
 		kept = append(kept, it)

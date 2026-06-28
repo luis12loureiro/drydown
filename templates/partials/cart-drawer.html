@@ -18,7 +18,7 @@
 {{ define "cart-drawer-inner" }}
 <div id="cart-drawer-body" class="flex h-full flex-col">
   <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
-    <h3 class="font-display text-2xl">Your bag <span class="text-gold">({{ .Count }})</span></h3>
+    <h3 class="font-display text-2xl">Your cart <span class="text-gold">({{ .Count }})</span></h3>
     <button @click="$store.drawer.open = false" class="grid h-9 w-9 place-items-center rounded-full hover:bg-white/5" aria-label="Close cart">
       <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
@@ -28,7 +28,7 @@
   <!-- empty -->
   <div class="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
     <svg class="h-20 w-20 text-white/15"><use href="#bottle" /></svg>
-    <p class="text-cream/60">Your bag is empty.</p>
+    <p class="text-cream/60">Your cart is empty.</p>
     <button @click="$store.drawer.open = false" class="rounded-full border border-gold/40 px-6 py-2.5 text-sm text-gold transition hover:bg-gold/10">Start sampling</button>
   </div>
   {{ else }}
@@ -47,7 +47,7 @@
       <div class="text-right">
         <p class="font-display text-lg text-gold">€{{ .Subtotal }}</p>
         <button
-          hx-delete="/cart/items/{{ .ProductID }}/{{ .ML }}"
+          hx-delete="/cart/items/{{ .ProductUUID }}/{{ .ML }}"
           hx-target="#cart-drawer-body"
           hx-swap="outerHTML"
           class="mt-1 text-xs text-muted underline-offset-2 hover:text-wine hover:underline"
@@ -94,7 +94,7 @@
     </span>
     <div>
       <p class="font-display text-2xl">Thank you!</p>
-      <p class="mt-1 text-cream/60">Order #{{ .ID }} confirmed — total €{{ .Total }}.</p>
+      <p class="mt-1 text-cream/60">Order #{{ .UUID }} confirmed — total €{{ .Total }}.</p>
     </div>
     <button @click="$store.drawer.open = false" class="rounded-full border border-gold/40 px-6 py-2.5 text-sm text-gold transition hover:bg-gold/10">Keep sampling</button>
   </div>

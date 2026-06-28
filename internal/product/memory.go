@@ -1,21 +1,23 @@
 package product
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/google/uuid"
+)
 
 // MemoryRepository is an in-memory adapter implementing Repository. It is a
 // stand-in for the eventual SQLite adapter (sqlite.go) so the app runs without
 // a database during early development.
-type MemoryRepository struct {
+type memoryRepository struct {
 	mu       sync.RWMutex
-	products map[int]Product
-	nextID   int
+	products map[string]Product
 }
 
 // NewMemoryRepository returns a repository pre-loaded with the seed catalogue.
 func NewMemoryRepository() Repository {
-	r := &MemoryRepository{
-		products: make(map[int]Product),
-		nextID:   1,
+	r := &memoryRepository{
+		products: make(map[string]Product),
 	}
 	for _, p := range seed() {
 		_, _ = r.Create(p)
@@ -23,19 +25,29 @@ func NewMemoryRepository() Repository {
 	return r
 }
 
-func (r *MemoryRepository) FindAll() ([]Product, error) {
+func (r *memoryRepository) FindAll() ([]Product, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	return r.sorted(func(Product) bool { return true }), nil
+	out := make([]Product, 0, len(r.products))
+	for _, p := range r.products {
+		out = append(out, p)
+	}
+	return out, nil
 }
 
-func (r *MemoryRepository) FindByFamily(fam string) ([]Product, error) {
+func (r *memoryRepository) FindByFamily(fam string) ([]Product, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	return r.sorted(func(p Product) bool { return p.Fam == fam }), nil
+	var out []Product
+	for _, p := range r.products {
+		if p.Fam == fam {
+			out = append(out, p)
+		}
+	}
+	return out, nil
 }
 
-func (r *MemoryRepository) FindByID(id int) (Product, error) {
+func (r *memoryRepository) FindByUUID(id string) (Product, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	p, ok := r.products[id]
@@ -45,26 +57,25 @@ func (r *MemoryRepository) FindByID(id int) (Product, error) {
 	return p, nil
 }
 
-func (r *MemoryRepository) Create(p Product) (Product, error) {
+func (r *memoryRepository) Create(p Product) (Product, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	p.ID = r.nextID
-	r.nextID++
-	r.products[p.ID] = p
+	p.UUID = uuid.New().String()
+	r.products[p.UUID] = p
 	return p, nil
 }
 
-func (r *MemoryRepository) Update(p Product) (Product, error) {
+func (r *memoryRepository) Update(p Product) (Product, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	if _, ok := r.products[p.ID]; !ok {
+	if _, ok := r.products[p.UUID]; !ok {
 		return Product{}, ErrNotFound
 	}
-	r.products[p.ID] = p
+	r.products[p.UUID] = p
 	return p, nil
 }
 
-func (r *MemoryRepository) Delete(id int) error {
+func (r *memoryRepository) Delete(id string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.products[id]; !ok {
@@ -72,19 +83,6 @@ func (r *MemoryRepository) Delete(id int) error {
 	}
 	delete(r.products, id)
 	return nil
-}
-
-// sorted returns the products matching keep, ordered by id for stable output.
-// The caller must hold at least a read lock.
-func (r *MemoryRepository) sorted(keep func(Product) bool) []Product {
-	out := make([]Product, 0, len(r.products))
-	for id := 1; id < r.nextID; id++ {
-		p, ok := r.products[id]
-		if ok && keep(p) {
-			out = append(out, p)
-		}
-	}
-	return out
 }
 
 // seed returns the starter catalogue, mirroring the original landing-page demo.

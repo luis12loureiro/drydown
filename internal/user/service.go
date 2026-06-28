@@ -5,10 +5,10 @@ import "time"
 // Service is the business-logic port for users.
 type Service interface {
 	List() ([]User, error)
-	Get(id int) (User, error)
+	Get(uuid string) (User, error)
 	Create(u User) (User, error)
-	Update(id int, u User) (User, error)
-	Delete(id int) error
+	Update(uuid string, u User) (User, error)
+	Delete(uuid string) error
 }
 
 type service struct {
@@ -24,8 +24,8 @@ func (s *service) List() ([]User, error) {
 	return s.repo.FindAll()
 }
 
-func (s *service) Get(id int) (User, error) {
-	return s.repo.FindByID(id)
+func (s *service) Get(uuid string) (User, error) {
+	return s.repo.FindByUUID(uuid)
 }
 
 func (s *service) Create(u User) (User, error) {
@@ -36,19 +36,19 @@ func (s *service) Create(u User) (User, error) {
 	return s.repo.Create(u)
 }
 
-func (s *service) Update(id int, u User) (User, error) {
+func (s *service) Update(uuid string, u User) (User, error) {
 	if !u.Valid() {
 		return User{}, ErrInvalid
 	}
-	existing, err := s.repo.FindByID(id)
+	existing, err := s.repo.FindByUUID(uuid)
 	if err != nil {
 		return User{}, err
 	}
-	u.ID = id
-	u.CreatedAt = existing.CreatedAt // preserve immutable fields
+	u.UUID = uuid
+	u.CreatedAt = existing.CreatedAt
 	return s.repo.Update(u)
 }
 
-func (s *service) Delete(id int) error {
-	return s.repo.Delete(id)
+func (s *service) Delete(uuid string) error {
+	return s.repo.Delete(uuid)
 }

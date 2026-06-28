@@ -89,10 +89,10 @@
       hx-post="/cart/items"
       hx-target="#cart-drawer-body"
       hx-swap="outerHTML"
-      @submit="$store.toast.fire('{{ .Name }}'); $store.drawer.open = true"
+      @submit="$store.toast.fire('{{ .Name }}')"
       class="mt-4 flex items-center justify-between gap-2"
     >
-      <input type="hidden" name="product_id" value="{{ .ID }}" />
+      <input type="hidden" name="product_id" value="{{ .UUID }}" />
       <input type="hidden" name="ml" :value="sizes[sel].ml" />
       <span class="font-display text-2xl text-cream" x-text="'€' + sizes[sel].price"></span>
       <button

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"html/template"
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -24,11 +23,11 @@ func NewHandler(s Service, tmpl *template.Template) *Handler {
 
 // Routes mounts the RESTful product endpoints.
 func (h *Handler) Routes(r chi.Router) {
-	r.Get("/products", h.list)           // browse / filter (HTML grid)
-	r.Post("/products", h.create)        // add a product (JSON)
-	r.Get("/products/{id}", h.get)       // single product (JSON)
-	r.Patch("/products/{id}", h.update)  // edit a product (JSON)
-	r.Delete("/products/{id}", h.delete) // remove a product
+	r.Get("/products", h.list)             // browse / filter (HTML grid)
+	r.Post("/products", h.create)          // add a product (JSON)
+	r.Get("/products/{uuid}", h.get)       // single product (JSON)
+	r.Patch("/products/{uuid}", h.update)  // edit a product (JSON)
+	r.Delete("/products/{uuid}", h.delete) // remove a product
 }
 
 // View decorates a Product with presentation-only data for templates.
@@ -63,12 +62,7 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
-	p, err := h.service.Get(id)
+	p, err := h.service.Get(chi.URLParam(r, "uuid"))
 	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -99,17 +93,12 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
 	var p Product
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, "invalid body", http.StatusBadRequest)
 		return
 	}
-	updated, err := h.service.Update(id, p)
+	updated, err := h.service.Update(chi.URLParam(r, "uuid"), p)
 	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -122,15 +111,12 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
-	if err := h.service.Delete(id); errors.Is(err, ErrNotFound) {
+	err := h.service.Delete(chi.URLParam(r, "uuid"))
+	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
-	} else if err != nil {
+	}
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -142,10 +128,6 @@ func (h *Handler) render(w http.ResponseWriter, name string, data any) {
 	if err := h.tmpl.ExecuteTemplate(w, name, data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-}
-
-func idParam(r *http.Request) (int, error) {
-	return strconv.Atoi(chi.URLParam(r, "id"))
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

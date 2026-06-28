@@ -3,8 +3,8 @@ package order
 // Repository is the persistence port for orders.
 type Repository interface {
 	FindAll() ([]Order, error)
-	FindByID(id int) (Order, error)
+	FindByUUID(uuid string) (Order, error)
 	Create(o Order) (Order, error)
 	Update(o Order) (Order, error)
-	Delete(id int) error
+	Delete(uuid string) error
 }

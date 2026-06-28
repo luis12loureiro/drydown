@@ -5,10 +5,10 @@ import "time"
 // Service is the business-logic port for orders.
 type Service interface {
 	List() ([]Order, error)
-	Get(id int) (Order, error)
+	Get(uuid string) (Order, error)
 	Place(items []Item) (Order, error)
-	SetStatus(id int, status string) (Order, error)
-	Cancel(id int) error
+	SetStatus(uuid string, status string) (Order, error)
+	Cancel(uuid string) error
 }
 
 type service struct {
@@ -24,8 +24,8 @@ func (s *service) List() ([]Order, error) {
 	return s.repo.FindAll()
 }
 
-func (s *service) Get(id int) (Order, error) {
-	return s.repo.FindByID(id)
+func (s *service) Get(uuid string) (Order, error) {
+	return s.repo.FindByUUID(uuid)
 }
 
 // Place creates a pending order from the supplied lines, computing the total.
@@ -45,8 +45,8 @@ func (s *service) Place(items []Item) (Order, error) {
 	})
 }
 
-func (s *service) SetStatus(id int, status string) (Order, error) {
-	o, err := s.repo.FindByID(id)
+func (s *service) SetStatus(uuid string, status string) (Order, error) {
+	o, err := s.repo.FindByUUID(uuid)
 	if err != nil {
 		return Order{}, err
 	}
@@ -54,6 +54,6 @@ func (s *service) SetStatus(id int, status string) (Order, error) {
 	return s.repo.Update(o)
 }
 
-func (s *service) Cancel(id int) error {
-	return s.repo.Delete(id)
+func (s *service) Cancel(uuid string) error {
+	return s.repo.Delete(uuid)
 }

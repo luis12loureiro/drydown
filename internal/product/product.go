@@ -3,7 +3,7 @@ package product
 
 import "errors"
 
-// ErrNotFound is returned when a product cannot be located by its id.
+// ErrNotFound is returned when a product cannot be located by its uuid.
 var ErrNotFound = errors.New("product: not found")
 
 // Size is a single decant volume offered for a product and its price (in euros).
@@ -15,7 +15,7 @@ type Size struct {
 // Product is a fragrance available in the catalogue. Attributes are kept
 // deliberately simple for the first deploy.
 type Product struct {
-	ID      int
+	UUID    string
 	Brand   string
 	Name    string
 	Family  string // display label, e.g. "Woody"

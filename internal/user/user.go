@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// ErrNotFound is returned when a user cannot be located by id.
+// ErrNotFound is returned when a user cannot be located by uuid.
 var ErrNotFound = errors.New("user: not found")
 
 // ErrInvalid is returned when a user fails validation.
@@ -15,7 +15,7 @@ var ErrInvalid = errors.New("user: invalid")
 
 // User is a customer record. Kept minimal for the first deploy.
 type User struct {
-	ID        int       `json:"id"`
+	UUID      string    `json:"uuid"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`

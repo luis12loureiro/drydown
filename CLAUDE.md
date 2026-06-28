@@ -21,6 +21,7 @@ Later will include our own fragrance line.
 
 ## Naming conventions
 - Files: snake_case
+- Go files: smallcase
 - Routes: kebab-case (/product-detail)
 - Go structs: PascalCase
 

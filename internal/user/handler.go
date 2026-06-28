@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -24,9 +23,9 @@ func NewHandler(s Service) *Handler {
 func (h *Handler) Routes(r chi.Router) {
 	r.Get("/users", h.list)
 	r.Post("/users", h.create)
-	r.Get("/users/{id}", h.get)
-	r.Patch("/users/{id}", h.update)
-	r.Delete("/users/{id}", h.delete)
+	r.Get("/users/{uuid}", h.get)
+	r.Patch("/users/{uuid}", h.update)
+	r.Delete("/users/{uuid}", h.delete)
 }
 
 func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
@@ -39,12 +38,7 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
-	u, err := h.service.Get(id)
+	u, err := h.service.Get(chi.URLParam(r, "uuid"))
 	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -75,17 +69,12 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
 	var u User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, "invalid body", http.StatusBadRequest)
 		return
 	}
-	updated, err := h.service.Update(id, u)
+	updated, err := h.service.Update(chi.URLParam(r, "uuid"), u)
 	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -102,23 +91,16 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
-	if err := h.service.Delete(id); errors.Is(err, ErrNotFound) {
+	err := h.service.Delete(chi.URLParam(r, "uuid"))
+	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
-	} else if err != nil {
+	}
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
-}
-
-func idParam(r *http.Request) (int, error) {
-	return strconv.Atoi(chi.URLParam(r, "id"))
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

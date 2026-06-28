@@ -1,36 +1,36 @@
 package order
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/google/uuid"
+)
 
 // MemoryRepository is an in-memory adapter implementing Repository. Swap for
 // sqlite.go later.
-type MemoryRepository struct {
+type memoryRepository struct {
 	mu     sync.RWMutex
-	orders map[int]Order
-	nextID int
+	orders map[string]Order
 }
 
 // NewMemoryRepository returns an empty in-memory order store.
 func NewMemoryRepository() Repository {
-	return &MemoryRepository{
-		orders: make(map[int]Order),
-		nextID: 1,
+	return &memoryRepository{
+		orders: make(map[string]Order),
 	}
 }
 
-func (r *MemoryRepository) FindAll() ([]Order, error) {
+func (r *memoryRepository) FindAll() ([]Order, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	out := make([]Order, 0, len(r.orders))
-	for id := 1; id < r.nextID; id++ {
-		if o, ok := r.orders[id]; ok {
-			out = append(out, o)
-		}
+	for _, o := range r.orders {
+		out = append(out, o)
 	}
 	return out, nil
 }
 
-func (r *MemoryRepository) FindByID(id int) (Order, error) {
+func (r *memoryRepository) FindByUUID(id string) (Order, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	o, ok := r.orders[id]
@@ -40,26 +40,25 @@ func (r *MemoryRepository) FindByID(id int) (Order, error) {
 	return o, nil
 }
 
-func (r *MemoryRepository) Create(o Order) (Order, error) {
+func (r *memoryRepository) Create(o Order) (Order, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	o.ID = r.nextID
-	r.nextID++
-	r.orders[o.ID] = o
+	o.UUID = uuid.New().String()
+	r.orders[o.UUID] = o
 	return o, nil
 }
 
-func (r *MemoryRepository) Update(o Order) (Order, error) {
+func (r *memoryRepository) Update(o Order) (Order, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	if _, ok := r.orders[o.ID]; !ok {
+	if _, ok := r.orders[o.UUID]; !ok {
 		return Order{}, ErrNotFound
 	}
-	r.orders[o.ID] = o
+	r.orders[o.UUID] = o
 	return o, nil
 }
 
-func (r *MemoryRepository) Delete(id int) error {
+func (r *memoryRepository) Delete(id string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.orders[id]; !ok {

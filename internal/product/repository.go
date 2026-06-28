@@ -5,8 +5,8 @@ package product
 type Repository interface {
 	FindAll() ([]Product, error)
 	FindByFamily(fam string) ([]Product, error)
-	FindByID(id int) (Product, error)
+	FindByUUID(uuid string) (Product, error)
 	Create(p Product) (Product, error)
 	Update(p Product) (Product, error)
-	Delete(id int) error
+	Delete(uuid string) error
 }

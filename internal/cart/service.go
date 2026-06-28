@@ -12,14 +12,14 @@ var ErrInvalidSize = errors.New("cart: invalid size")
 // Catalog is the port the cart needs from the product domain to price lines.
 // product.Service satisfies it.
 type Catalog interface {
-	Get(id int) (product.Product, error)
+	Get(uuid string) (product.Product, error)
 }
 
 // Service is the business-logic port for the cart.
 type Service interface {
 	Get(id string) (Cart, error)
-	AddItem(cartID string, productID, ml, qty int) (Cart, error)
-	RemoveItem(cartID string, productID, ml int) (Cart, error)
+	AddItem(cartID string, productUUID string, ml, qty int) (Cart, error)
+	RemoveItem(cartID string, productUUID string, ml int) (Cart, error)
 	Clear(cartID string) error
 }
 
@@ -37,12 +37,12 @@ func NewService(repo Repository, catalog Catalog) Service {
 func (s *service) Get(id string) (Cart, error) {
 	c, err := s.repo.Find(id)
 	if errors.Is(err, ErrNotFound) {
-		return Cart{ID: id}, nil
+		return Cart{UUID: id}, nil
 	}
 	return c, err
 }
 
-func (s *service) AddItem(cartID string, productID, ml, qty int) (Cart, error) {
+func (s *service) AddItem(cartID string, productUUID string, ml, qty int) (Cart, error) {
 	if qty < 1 {
 		qty = 1
 	}
@@ -50,7 +50,7 @@ func (s *service) AddItem(cartID string, productID, ml, qty int) (Cart, error) {
 	if err != nil {
 		return Cart{}, err
 	}
-	p, err := s.catalog.Get(productID)
+	p, err := s.catalog.Get(productUUID)
 	if err != nil {
 		return Cart{}, err
 	}
@@ -59,13 +59,13 @@ func (s *service) AddItem(cartID string, productID, ml, qty int) (Cart, error) {
 		return Cart{}, ErrInvalidSize
 	}
 	c.Add(Item{
-		ProductID: p.ID,
-		Brand:     p.Brand,
-		Name:      p.Name,
-		Fam:       p.Fam,
-		ML:        ml,
-		Price:     price,
-		Qty:       qty,
+		ProductUUID: p.UUID,
+		Brand:       p.Brand,
+		Name:        p.Name,
+		Fam:         p.Fam,
+		ML:          ml,
+		Price:       price,
+		Qty:         qty,
 	})
 	if err := s.repo.Save(c); err != nil {
 		return Cart{}, err
@@ -73,12 +73,12 @@ func (s *service) AddItem(cartID string, productID, ml, qty int) (Cart, error) {
 	return c, nil
 }
 
-func (s *service) RemoveItem(cartID string, productID, ml int) (Cart, error) {
+func (s *service) RemoveItem(cartID string, productUUID string, ml int) (Cart, error) {
 	c, err := s.Get(cartID)
 	if err != nil {
 		return Cart{}, err
 	}
-	c.Remove(productID, ml)
+	c.Remove(productUUID, ml)
 	if err := s.repo.Save(c); err != nil {
 		return Cart{}, err
 	}

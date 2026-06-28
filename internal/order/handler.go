@@ -5,7 +5,6 @@ import (
 	"errors"
 	"html/template"
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/luis12loureiro/drydown/internal/cart"
@@ -27,11 +26,11 @@ func NewHandler(s Service, carts cart.Service, tmpl *template.Template) *Handler
 
 // Routes mounts the RESTful order endpoints.
 func (h *Handler) Routes(r chi.Router) {
-	r.Get("/orders", h.list)           // all orders (JSON)
-	r.Post("/orders", h.checkout)      // place order from the cart (HTML)
-	r.Get("/orders/{id}", h.get)       // single order (JSON)
-	r.Patch("/orders/{id}", h.update)  // change status (JSON)
-	r.Delete("/orders/{id}", h.cancel) // cancel an order
+	r.Get("/orders", h.list)             // all orders (JSON)
+	r.Post("/orders", h.checkout)        // place order from the cart (HTML)
+	r.Get("/orders/{uuid}", h.get)       // single order (JSON)
+	r.Patch("/orders/{uuid}", h.update)  // change status (JSON)
+	r.Delete("/orders/{uuid}", h.cancel) // cancel an order
 }
 
 // checkout turns the visitor's cart into a pending order and empties the cart.
@@ -50,7 +49,7 @@ func (h *Handler) checkout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if err := h.carts.Clear(c.ID); err != nil {
+	if err := h.carts.Clear(c.UUID); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -67,12 +66,7 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
-	o, err := h.service.Get(id)
+	o, err := h.service.Get(chi.URLParam(r, "uuid"))
 	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -85,11 +79,6 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
 	var body struct {
 		Status string `json:"status"`
 	}
@@ -97,7 +86,7 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid body", http.StatusBadRequest)
 		return
 	}
-	o, err := h.service.SetStatus(id, body.Status)
+	o, err := h.service.SetStatus(chi.URLParam(r, "uuid"), body.Status)
 	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -110,15 +99,12 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) cancel(w http.ResponseWriter, r *http.Request) {
-	id, err := idParam(r)
-	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
-		return
-	}
-	if err := h.service.Cancel(id); errors.Is(err, ErrNotFound) {
+	err := h.service.Cancel(chi.URLParam(r, "uuid"))
+	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
-	} else if err != nil {
+	}
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -130,11 +116,11 @@ func itemsFromCart(c cart.Cart) []Item {
 	items := make([]Item, len(c.Items))
 	for i, it := range c.Items {
 		items[i] = Item{
-			ProductID: it.ProductID,
-			Name:      it.Name,
-			ML:        it.ML,
-			Price:     it.Price,
-			Qty:       it.Qty,
+			ProductUUID: it.ProductUUID,
+			Name:        it.Name,
+			ML:          it.ML,
+			Price:       it.Price,
+			Qty:         it.Qty,
 		}
 	}
 	return items
@@ -145,10 +131,6 @@ func (h *Handler) render(w http.ResponseWriter, name string, data any) {
 	if err := h.tmpl.ExecuteTemplate(w, name, data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-}
-
-func idParam(r *http.Request) (int, error) {
-	return strconv.Atoi(chi.URLParam(r, "id"))
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

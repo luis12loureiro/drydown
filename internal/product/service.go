@@ -8,10 +8,10 @@ var ErrInvalid = errors.New("product: invalid")
 // Service is the business-logic port for the catalogue.
 type Service interface {
 	List(family string) ([]Product, error)
-	Get(id int) (Product, error)
+	Get(uuid string) (Product, error)
 	Create(p Product) (Product, error)
-	Update(id int, p Product) (Product, error)
-	Delete(id int) error
+	Update(uuid string, p Product) (Product, error)
+	Delete(uuid string) error
 }
 
 type service struct {
@@ -30,8 +30,8 @@ func (s *service) List(family string) ([]Product, error) {
 	return s.repo.FindByFamily(family)
 }
 
-func (s *service) Get(id int) (Product, error) {
-	return s.repo.FindByID(id)
+func (s *service) Get(uuid string) (Product, error) {
+	return s.repo.FindByUUID(uuid)
 }
 
 func (s *service) Create(p Product) (Product, error) {
@@ -41,14 +41,14 @@ func (s *service) Create(p Product) (Product, error) {
 	return s.repo.Create(p)
 }
 
-func (s *service) Update(id int, p Product) (Product, error) {
+func (s *service) Update(uuid string, p Product) (Product, error) {
 	if !p.Valid() {
 		return Product{}, ErrInvalid
 	}
-	p.ID = id
+	p.UUID = uuid
 	return s.repo.Update(p)
 }
 
-func (s *service) Delete(id int) error {
-	return s.repo.Delete(id)
+func (s *service) Delete(uuid string) error {
+	return s.repo.Delete(uuid)
 }
